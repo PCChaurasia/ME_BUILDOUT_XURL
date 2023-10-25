@@ -22,16 +22,16 @@ public class XUrlImpl implements XUrl {
     @Override
     public String registerNewUrl(String longUrl, String shortUrl) {
         if (shortToLongUrlMap.containsKey(shortUrl)) {
-            return null; // Custom short URL already exists.
+            return null; 
         }
 
         if (longToShortUrlMap.containsKey(longUrl)) {
-            return longToShortUrlMap.get(longUrl); // Long URL already has a short URL.
+            return longToShortUrlMap.get(longUrl); 
         }
 
         longToShortUrlMap.put(longUrl, shortUrl);
         shortToLongUrlMap.put(shortUrl, longUrl);
-        hitCountMap.put(longUrl, 0); // Initialize hit count to 0.
+        hitCountMap.put(longUrl, 0); 
 
         return "http://short.url/" + shortUrl;
     }
@@ -41,10 +41,10 @@ public class XUrlImpl implements XUrl {
         if (shortToLongUrlMap.containsKey(shortUrl)) {
             String longUrl = shortToLongUrlMap.get(shortUrl);
             int hitCount = hitCountMap.getOrDefault(longUrl, 0);
-            hitCountMap.put(longUrl, hitCount + 1); // Increment hit count.
+            hitCountMap.put(longUrl, hitCount + 1); 
             return longUrl;
         }
-        return null; // Short URL not found.
+        return null; 
     }
 
     @Override
@@ -53,10 +53,10 @@ public class XUrlImpl implements XUrl {
             String shortUrl = longToShortUrlMap.get(longUrl);
             longToShortUrlMap.remove(longUrl);
             shortToLongUrlMap.remove(shortUrl);
-            //int hitCount = hitCountMap.remove(longUrl); // Get and remove the hit count.
+        
             return longUrl;
         }
-        return null; // Long URL not found, return null.
+        return null; 
     }
     
 
@@ -64,7 +64,7 @@ public class XUrlImpl implements XUrl {
         return hitCountMap.getOrDefault(longUrl, 0);
     }
 
-    // Helper method to generate a random 9-character alphanumeric string.
+
     private String generateShortUrl() {
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder shortUrl = new StringBuilder(9);
