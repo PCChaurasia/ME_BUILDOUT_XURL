@@ -29,7 +29,7 @@ public class XUrlImpl implements XUrl {
             return longToShortUrl.get(longUrl); 
         }
 
-        //longToShortUrlMap.put(longUrl, shortUrl);
+        longToShortUrlMap.put(longUrl, shortUrl);
         shortToLongUrl.put(shortUrl, longUrl);
         hitCountMap.put(longUrl, 0); 
 
