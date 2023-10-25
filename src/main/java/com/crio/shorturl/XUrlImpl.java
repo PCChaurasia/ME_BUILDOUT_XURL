@@ -4,13 +4,13 @@ import java.util.Map;
 import java.util.Random;
 
 public class XUrlImpl implements XUrl {
-    private Map<String, String> longToShortUrlMap;
-    private Map<String, String> shortToLongUrlMap;
+    private Map<String, String> longToShortUrl;
+    private Map<String, String> shortToLongUrl;
     private Map<String, Integer> hitCountMap;
 
     public XUrlImpl() {
-        longToShortUrlMap = new HashMap<>();
-        shortToLongUrlMap = new HashMap<>();
+        longToShortUrl = new HashMap<>();
+        shortToLongUrl = new HashMap<>();
         hitCountMap = new HashMap<>();
     }
 
@@ -21,16 +21,16 @@ public class XUrlImpl implements XUrl {
 
     @Override
     public String registerNewUrl(String longUrl, String shortUrl) {
-        if (shortToLongUrlMap.containsKey(shortUrl)) {
+        if (shortToLongUrl.containsKey(shortUrl)) {
             return null; 
         }
 
-        if (longToShortUrlMap.containsKey(longUrl)) {
-            return longToShortUrlMap.get(longUrl); 
+        if (longToShortUrl.containsKey(longUrl)) {
+            return longToShortUrl.get(longUrl); 
         }
 
         //longToShortUrlMap.put(longUrl, shortUrl);
-        shortToLongUrlMap.put(shortUrl, longUrl);
+        shortToLongUrl.put(shortUrl, longUrl);
         hitCountMap.put(longUrl, 0); 
 
         return "http://short.url/" + shortUrl;
@@ -38,8 +38,8 @@ public class XUrlImpl implements XUrl {
 
     @Override
     public String getUrl(String shortUrl) {
-        if (shortToLongUrlMap.containsKey(shortUrl)) {
-            String longUrl = shortToLongUrlMap.get(shortUrl);
+        if (shortToLongUrl.containsKey(shortUrl)) {
+            String longUrl = shortToLongUrl.get(shortUrl);
             int hitCount = hitCountMap.getOrDefault(longUrl, 0);
             hitCountMap.put(longUrl, hitCount + 1); 
             return longUrl;
@@ -49,10 +49,10 @@ public class XUrlImpl implements XUrl {
 
     @Override
     public String delete(String longUrl) {
-        if (longToShortUrlMap.containsKey(longUrl)) {
-            String shortUrl = longToShortUrlMap.get(longUrl);
-            longToShortUrlMap.remove(longUrl);
-            shortToLongUrlMap.remove(shortUrl);
+        if (longToShortUrl.containsKey(longUrl)) {
+            String shortUrl = longToShortUrl.get(longUrl);
+            longToShortUrl.remove(longUrl);
+            shortToLongUrl.remove(shortUrl);
         
             return longUrl;
         }
