@@ -13,6 +13,16 @@ public class XUrlImpl implements XUrl {
         shortToLongUrl = new HashMap<>();
         hitCountMap = new HashMap<>();
     }
+    private String generateShortUrl() {
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder shortUrl = new StringBuilder(9);
+        Random rand = new Random();
+        for (int i = 0; i < 9; i++) {
+            int index = rand.nextInt(characters.length());
+            shortUrl.append(characters.charAt(index));
+        }
+        return shortUrl.toString();
+    }
 
     @Override
     public String registerNewUrl(String longUrl) {
@@ -63,17 +73,7 @@ public class XUrlImpl implements XUrl {
     public Integer getHitCount(String longUrl) {
         return hitCountMap.getOrDefault(longUrl, 0);
     }
+    
 
-
-    private String generateShortUrl() {
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        StringBuilder shortUrl = new StringBuilder(9);
-        Random rand = new Random();
-        for (int i = 0; i < 9; i++) {
-            int index = rand.nextInt(characters.length());
-            shortUrl.append(characters.charAt(index));
-        }
-        return shortUrl.toString();
-    }
 }
 
