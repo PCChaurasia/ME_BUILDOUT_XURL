@@ -1,79 +1,123 @@
 package com.crio.shorturl;
+
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class XUrlImpl implements XUrl {
-    private Map<String, String> longToShortUrl;
-    private Map<String, String> shortToLongUrl;
-    private Map<String, Integer> hitCountMap;
 
-    public XUrlImpl() {
-        longToShortUrl = new HashMap<>();
-        shortToLongUrl = new HashMap<>();
-        hitCountMap = new HashMap<>();
+    HashMap<String, String> shortToLong;
+    HashMap<String, pair<String, Integer>> longToShort;
+    SlugGenerator slugGenerator;
+    private static final String URL = "http://short.url/";
+    public XUrlImpl(){
+        shortToLong = new HashMap<>();
+        longToShort = new HashMap<>();
+        slugGenerator = new SlugGenerator();
     }
-    private String generateShortUrl() {
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        StringBuilder shortUrl = new StringBuilder(9);
-        Random rand = new Random();
-        for (int i = 0; i < 9; i++) {
-            int index = rand.nextInt(characters.length());
-            shortUrl.append(characters.charAt(index));
+
+     @Override
+    public
+    String registerNewUrl(String longUrl){
+        if(!longToShort.containsKey(longUrl)){
+            String slug = slugGenerator.generatorRandomSlug();
+            shortToLong.put(URL+slug, longUrl);
+            longToShort.put(longUrl, new pair<>(URL+slug, 0));
+
         }
-        return shortUrl.toString();
+        return longToShort.get(longUrl).getKey();
+
     }
 
     @Override
-    public String registerNewUrl(String longUrl) {
-        return registerNewUrl(longUrl, generateShortUrl());
+    public String registerNewUrl(String longUrl, String shortUrl){
+        if(shortToLong.containsKey(shortUrl)){
+            return null;
+        }
+        else{
+            shortToLong.put(shortUrl, longUrl);
+            longToShort.put(longUrl, new pair<String, Integer> (shortUrl, 0 ));
+            return longToShort.get(longUrl).getKey();
+        }
+
     }
 
     @Override
-    public String registerNewUrl(String longUrl, String shortUrl) {
-        if (shortToLongUrl.containsKey(shortUrl)) {
-            return null; 
+    public String getUrl(String shortUrl){
+        if(shortToLong.containsKey(shortUrl)){
+            String longUrl = shortToLong.get(shortUrl);
+            longToShort.get(longUrl).setValue(longToShort.get(longUrl).getValue()+1);
+            return shortToLong.get(shortUrl);
         }
-
-        if (longToShortUrl.containsKey(longUrl)) {
-            return longToShortUrl.get(longUrl); 
+        else{
+            return null;
         }
-
-        longToShortUrl.put(longUrl, shortUrl);
-        shortToLongUrl.put(shortUrl, longUrl);
-        hitCountMap.put(longUrl, 0); 
-
-        return "http://short.url/" + shortUrl;
+       
     }
-
     @Override
-    public String getUrl(String shortUrl) {
-        if (shortToLongUrl.containsKey(shortUrl)) {
-            String longUrl = shortToLongUrl.get(shortUrl);
-            int hitCount = hitCountMap.getOrDefault(longUrl, 0);
-            hitCountMap.put(longUrl, hitCount + 1); 
-            return longUrl;
+    public Integer getHitCount(String longUrl){
+
+        if(longToShort.containsKey(longUrl)){
+            return longToShort.get(longUrl).getValue();
         }
-        return null; 
+        return 0;
+    }
+    @Override
+    public String delete(String longUrl){
+        shortToLong.remove(longToShort.get(longUrl).getKey());
+        return null;
+
     }
 
-    @Override
-    public String delete(String longUrl) {
-        if (longToShortUrl.containsKey(longUrl)) {
-            String shortUrl = longToShortUrl.get(longUrl);
-            longToShortUrl.remove(longUrl);
-            shortToLongUrl.remove(shortUrl);
-        
-            return longUrl;
-        }
-        return null; 
-    }
+
+
     
+    public class pair<T, T1> {
+        T key;
+        T1 value;
 
-    public Integer getHitCount(String longUrl) {
-        return hitCountMap.getOrDefault(longUrl, 0);
+        public pair(T key, T1 value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public T getKey() {
+            return key;
+        }
+
+        public T1 getValue() {
+            return value;
+        }
+
+        public void setKey(T key) {
+            this.key = key;
+        }
+
+        public void setValue(T1 value) {
+            this.value = value;
+        }
     }
-    
+
+    public class SlugGenerator {
+        private static final int slug_no = 9;
+        private static final String Alphabet =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private Random random;
+
+    public SlugGenerator(){
+        random = new Random();
+    }
+
+        public String generatorRandomSlug() {
+            char[] result = new char[slug_no];
+            for (int i = 0; i < slug_no; i++) {
+                int randomIndex = random.nextInt(Alphabet.length() - 1);
+                result[i] = Alphabet.charAt(randomIndex);
+            }
+            return new String(result);
+
+        }
+    }
+
+   
 
 }
-
